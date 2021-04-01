@@ -7,6 +7,7 @@ interface HomeContextData {
     currentTime: number;
     totalTime: number;
     audioIndex: number;
+    panner;
     configAudio: ()=>void;
     toonglePlayPause: ()=> void;
     toongleMute: ()=> void;
@@ -14,6 +15,7 @@ interface HomeContextData {
     configCurrentTime: (value: number) => void;
     updateAudio: (value: number) => void;
     configAudioIndex: (index: number) => void;
+    configPanner: (index: number) => void;
 }
 
 interface HomeContextProviderProps {
@@ -27,9 +29,12 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMute, setIsMute] = useState(false);
     const [volume, setVolume] = useState(1);
+    const [panner, setPanner] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const [totalTime, setTimeTotal] = useState(0);
     const [audioIndex, setAudioIndex] = useState(0); 
+    const [gain, setGain] = useState<GainNode>(); 
+    const [stered, setStereo] = useState<StereoPannerNode>();
 
     useEffect(() => {
         if (audio) {
@@ -63,6 +68,20 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
         setAudioIndex(newAudioIndex);
         setCurrentTime(0);
         setAudio(updatedAudio);
+
+        const audioConext = new AudioContext();
+        const media = audioConext.createMediaElementSource(updatedAudio);
+        const updatedGain = audioConext.createGain();
+        const updatedStereo = audioConext.createStereoPanner();
+        media.connect(updatedGain);
+        updatedGain.connect(updatedStereo);
+        updatedStereo.connect(audioConext.destination);
+        
+        updatedAudio.onplay = () => {
+            audioConext.resume();
+        }
+        setGain(updatedGain);
+        setStereo(updatedStereo);
     }
 
     const configAudioIndex = (index: number) => {
@@ -99,12 +118,17 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
 
     const configVolume = (value: number) => {
         setVolume(value);
-        audio.volume = value;
+        gain.gain.value = value;
     }
 
     const configCurrentTime = (value: number) => {
         setCurrentTime(value);
         audio.currentTime = value;
+    }
+    
+    const configPanner = (value: number) => {
+        setPanner(value);
+        stered.pan.value = value;
     }
 
     return (
@@ -115,13 +139,15 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
             currentTime,
             totalTime,
             audioIndex,
+            panner,
             configAudio,
             toonglePlayPause,
             toongleMute,
             configVolume,
             configCurrentTime,
             updateAudio,
-            configAudioIndex
+            configAudioIndex,
+            configPanner
         }}>
         {children}
         </HomeContext.Provider>

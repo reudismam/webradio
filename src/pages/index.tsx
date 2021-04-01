@@ -14,12 +14,14 @@ export default function Home() {
       currentTime,
       totalTime,
       audioIndex,
+      panner,
       configAudio,
       toonglePlayPause,
       toongleMute,
       configVolume,
       configCurrentTime,
-      configAudioIndex
+      configAudioIndex,
+      configPanner
     } = useContext(HomeContext);
 
   useEffect(()=> {
@@ -100,6 +102,14 @@ export default function Home() {
                  value={volume}
                  onChange={e => configVolume(Number(e.target.value))}
                  />
+              <input 
+                type="range" 
+                min="-1" 
+                max="1" 
+                value={panner}
+                onChange = {e => configPanner(Number(e.target.value))}
+                step="0.01" 
+              ></input>
             </div>
         </div>
       </div>
