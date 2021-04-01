@@ -27,21 +27,81 @@
 }
 
 .mainContent {
+  display: flex;
   background-color: #333E4D;
   width: 75%;
 }
+
+.topMenu {
+  height: 200px;
+}
+
+.musicContent {
+  /*height: 100%;*/
+  flex: 1;
+}
+
+.musicDetails {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.musicDetail {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.musicDetail img {
+  width: 100%;
+}
+
+.musicDetail h4 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+}
+
+
+
 
 .controles {
   background-color: #282828;
   width: 100%;
   height: 15vh;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr;
 }
 
 .audioDetails {
-  background-color: teal;
+ display: flex;
+ align-items: center;
+ justify-content: center;
 }
+
+.audioDetails img{
+  width: 80px;
+} 
+
+.audioDetails h4 {
+  color: #525252;
+  margin-left: 20px;
+}
+
+.musicContent {
+  font-family: "Poppins", sans-serif;
+  color: #BFC3C7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/*.musicDetails {
+  background-color: tomato;
+  height: 100%;
+  width: 100%;;
+}*/
 
 .audioControls {
   width: 90%;
@@ -52,12 +112,13 @@
 }
 
 .play {
-  display: block;
-  color: #ffffff;
+  color: #434343;
+  font-size: 40px !important;
 }
 
 .mute {
-  color: #ffffff;
+  color: #434343;
+  font-size: 40px !important;
 }
 
 .volumeControls {
@@ -71,9 +132,30 @@
   display: flex;
   width: 100%;
   justify-content: center;
-  color: #ffffff;
+  color: #484848;
+  align-items: center;
 }
 
-.time {
- width: 50%;
+.time, .volume {
+   appearance: none;
+   -webkit-appearance: none;
+   width: 50%;
+   background-color: transparent;
+   outline: none;
+   margin: 0 10px;
+}
+
+.time::-webkit-slider-runnable-track,
+.volume::-webkit-slider-runnable-track {
+  background-color: #363636;
+  height: 5px;
+}
+
+.time::-webkit-slider-thumb,
+.volume::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 5px;
+  width: 5px;
+  background-color: #5C5C5C;
 }

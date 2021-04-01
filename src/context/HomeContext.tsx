@@ -6,11 +6,13 @@ interface HomeContextData {
     volume: number;
     currentTime: number;
     totalTime: number;
+    audioIndex: number;
     configAudio: ()=>void;
     toonglePlayPause: ()=> void;
     toongleMute: ()=> void;
     configVolume: (value: number) => void;
     configCurrentTime: (value: number) => void;
+    setupAudio: (value: number) => void;
 }
 
 interface HomeContextProviderProps {
@@ -26,9 +28,24 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
     const [volume, setVolume] = useState(1);
     const [currentTime, setCurrentTime] = useState(0);
     const [totalTime, setTimeTotal] = useState(0);
+    const [audioIndex, setAudioIndex] = useState(0);
 
     const configAudio = () => {
-        const audioInicial = new Audio("/audios/audio3.mp3");
+        updateAudio(0);
+    }
+
+    const setupAudio = (index: number) => {
+        pause();
+        setIsPlaying(false);
+        setCurrentTime(0);
+        updateAudio(index);
+    }
+
+    const updateAudio = (index: number) => {
+        const currentAudioIndex = index % 3;
+        const audioInicial = new Audio(`/audios/audio${currentAudioIndex + 1}.mp3`);
+        setCurrentTime(0);
+        setAudioIndex(index);
         setAudio(audioInicial);
 
         audioInicial.onloadeddata = ()=> {
@@ -82,11 +99,13 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
             volume,
             currentTime,
             totalTime,
+            audioIndex,
             configAudio,
             toonglePlayPause,
             toongleMute,
             configVolume,
-            configCurrentTime
+            configCurrentTime,
+            setupAudio
         }}>
         {children}
         </HomeContext.Provider>
