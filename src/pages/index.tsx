@@ -4,6 +4,7 @@ import { HomeContext } from '../context/HomeContext';
 import styles from '../../styles/Home.module.css';
 import {Icon} from '@material-ui/core';
 import {secondsToTimeString} from '../utils/converter';
+import {musics} from '../data/musics';
 
 export default function Home() {
   const {
@@ -12,11 +13,13 @@ export default function Home() {
       volume,
       currentTime,
       totalTime,
+      audioIndex,
       configAudio,
       toonglePlayPause,
       toongleMute,
       configVolume,
-      configCurrentTime
+      configCurrentTime,
+      configAudioIndex
     } = useContext(HomeContext);
 
   useEffect(()=> {
@@ -37,12 +40,30 @@ export default function Home() {
       
           </div>
           <div className={styles.mainContent}>
-        
+            <div className={styles.topMenu}>
+
+            </div>
+            <div className={styles.musicContent}>
+              <h1 className={styles.musicsTitle}>It's #ThrowbackThurday</h1>
+              <div className={styles.musicDetails}>
+                  {
+                    musics.map((music, index) => {
+                      return (
+                        <div className={styles.musicContail} onClick={()=> configAudioIndex(index)}>
+                          <img className={styles.musicImage} src={`capas/${music.cover}`}></img>
+                          <h4>{music.title}</h4>
+                        </div>
+                      );
+                    })
+                  }
+              </div>
+            </div>
           </div>
         </div>
         <div className={styles.controles}>
             <div className={styles.audioDetails}>
-
+                <img src={`capas/${musics[audioIndex].cover}`} alt={musics[audioIndex].title}></img>
+                <h4>{musics[audioIndex].title}</h4>
             </div>
 
             <div className={styles.audioControls}>
@@ -71,7 +92,7 @@ export default function Home() {
                 (<Icon className={styles.mute} onClick={toongleMute}>volume_off</Icon>):
                 (<Icon className={styles.mute} onClick={toongleMute}>volume_up</Icon>)
               }
-              <input 
+              <input className={styles.volume}
                  type="range" 
                  min="0" 
                  max="1" 

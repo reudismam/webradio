@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 
 interface HomeContextData {
     isPlaying: boolean;
@@ -6,11 +6,14 @@ interface HomeContextData {
     volume: number;
     currentTime: number;
     totalTime: number;
+    audioIndex: number;
     configAudio: ()=>void;
     toonglePlayPause: ()=> void;
     toongleMute: ()=> void;
     configVolume: (value: number) => void;
     configCurrentTime: (value: number) => void;
+    updateAudio: (value: number) => void;
+    configAudioIndex: (index: number) => void;
 }
 
 interface HomeContextProviderProps {
@@ -26,18 +29,47 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
     const [volume, setVolume] = useState(1);
     const [currentTime, setCurrentTime] = useState(0);
     const [totalTime, setTimeTotal] = useState(0);
+    const [audioIndex, setAudioIndex] = useState(0); 
+
+    useEffect(() => {
+        if (audio) {
+            audio.onloadeddata = ()=> {
+                setTimeTotal(audio.duration);
+                setCurrentTime(0);
+
+                if (isPlaying) {
+                    play();
+                }
+            }
+    
+            audio.ontimeupdate = ()=> {
+                setCurrentTime(audio.currentTime);
+            }
+
+            audio.onended = () => {
+                //setAudioIndex(audioIndex + 1);
+                updateAudio(audioIndex + 1);
+            }
+        }
+    }, [audio])
 
     const configAudio = () => {
-        const audioInicial = new Audio("/audios/audio3.mp3");
-        setAudio(audioInicial);
+        updateAudio(0);
+    }
 
-        audioInicial.onloadeddata = ()=> {
-            setTimeTotal(audioInicial.duration);
-        }
+    const updateAudio = (index: number) => {
+        const newAudioIndex = index % 3;
+        const updatedAudio = new Audio(`/audios/audio${newAudioIndex + 1}.mp3`);
+        setAudioIndex(newAudioIndex);
+        setCurrentTime(0);
+        setAudio(updatedAudio);
+    }
 
-        audioInicial.ontimeupdate = ()=> {
-            setCurrentTime(audioInicial.currentTime);
-        }
+    const configAudioIndex = (index: number) => {
+        updateAudio(index);
+        setAudioIndex(index);
+        setIsPlaying(false);
+        audio.pause();
     }
 
     const toonglePlayPause = () => {
@@ -82,11 +114,14 @@ const HomeContextProvider = ({children}:HomeContextProviderProps) => {
             volume,
             currentTime,
             totalTime,
+            audioIndex,
             configAudio,
             toonglePlayPause,
             toongleMute,
             configVolume,
-            configCurrentTime
+            configCurrentTime,
+            updateAudio,
+            configAudioIndex
         }}>
         {children}
         </HomeContext.Provider>
